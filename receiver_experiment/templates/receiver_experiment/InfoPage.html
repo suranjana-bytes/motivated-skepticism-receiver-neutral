@@ -1,0 +1,80 @@
+{{ block title }}Receiver Experiment{{ endblock }}
+
+{{ block styles }}
+<link rel="stylesheet" href="{{ static 'receiver_experiment/experiment.css' }}">
+{{ endblock }}
+
+{{ block content }}
+<main class="app-shell">
+    <section class="experiment-card">
+        <div class="card-topline">
+            <span>{{ phase_label }}</span>
+            <span>{{ screen_counter }}</span>
+        </div>
+
+        <div class="progress-track" aria-hidden="true">
+            <div class="progress-fill" style="width: {{ progress_percent }}%;"></div>
+        </div>
+
+        <div class="screen-content">
+            {{ if eyebrow }}
+                <span class="eyebrow">{{ eyebrow }}</span>
+            {{ endif }}
+
+            {{ if round_chip }}
+                <div class="round-chip">{{ round_chip }}</div>
+            {{ endif }}
+
+            <h1 class="{{ heading_class }}">{{ heading }}</h1>
+
+            {{ if instruction_lines }}
+                <div class="instruction-copy">
+                    {{ for line in instruction_lines }}
+                        {{ if line.css_class == 'spacer-line' }}
+                            <div class="instruction-spacer" aria-hidden="true"></div>
+                        {{ else }}
+                            <p class="instruction-line {{ line.css_class }}">{{ line.text }}</p>
+                        {{ endif }}
+                    {{ endfor }}
+                </div>
+            {{ endif }}
+
+            {{ for paragraph in paragraphs }}
+                <p>{{ paragraph }}</p>
+            {{ endfor }}
+
+            {{ if bullets }}
+                <ul class="info-list">
+                    {{ for bullet in bullets }}
+                        <li>{{ bullet }}</li>
+                    {{ endfor }}
+                </ul>
+            {{ endif }}
+
+            {{ if secondary_bullets }}
+                <ul class="info-list">
+                    {{ for bullet in secondary_bullets }}
+                        <li>{{ bullet }}</li>
+                    {{ endfor }}
+                </ul>
+            {{ endif }}
+
+            {{ if status_badge }}
+                <div class="status-badge {{ status_badge_class }}">{{ status_badge }}</div>
+            {{ endif }}
+
+            {{ if message_box }}
+                <div class="message-box">"{{ message_box }}"</div>
+            {{ endif }}
+
+            {{ if footer }}
+                <p class="preformatted-copy">{{ footer }}</p>
+            {{ endif }}
+        </div>
+
+        <div class="action-row">
+            <button class="otree-btn-next btn-primary">{{ button_label }}</button>
+        </div>
+    </section>
+</main>
+{{ endblock }}

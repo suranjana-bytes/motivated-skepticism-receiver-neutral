@@ -1,0 +1,58 @@
+{{ block title }}Receiver Experiment{{ endblock }}
+
+{{ block styles }}
+<link rel="stylesheet" href="{{ static 'receiver_experiment/experiment.css' }}">
+{{ endblock }}
+
+{{ block content }}
+<main class="app-shell">
+    <section class="experiment-card thank-you-card">
+        <div class="pixel-sparkles" aria-hidden="true">
+            <span class="pixel-sparkle sparkle-1"></span>
+            <span class="pixel-sparkle sparkle-2"></span>
+            <span class="pixel-sparkle sparkle-3"></span>
+            <span class="pixel-sparkle sparkle-4"></span>
+            <span class="pixel-sparkle sparkle-5"></span>
+            <span class="pixel-sparkle sparkle-6"></span>
+            <span class="pixel-sparkle sparkle-7"></span>
+            <span class="pixel-sparkle sparkle-8"></span>
+        </div>
+
+        <div class="card-topline">
+            <span>{{ phase_label }}</span>
+            <span>{{ screen_counter }}</span>
+        </div>
+
+        <div class="progress-track" aria-hidden="true">
+            <div class="progress-fill" style="width: {{ progress_percent }}%;"></div>
+        </div>
+
+        <div class="screen-content thank-you-content">
+            <span class="eyebrow">Thank You</span>
+            <h1 class="thank-you-heading">Thank you for your participation.</h1>
+            <p class="thank-you-copy">
+                Your responses have been recorded successfully.
+            </p>
+
+            <div class="thank-you-stats" aria-label="Experiment summary">
+                <article class="thank-you-stat-card">
+                    <span class="thank-you-stat-label">IQ Items Correct</span>
+                    <strong class="thank-you-stat-value">{{ iq_total }} / 10</strong>
+                </article>
+                <article class="thank-you-stat-card">
+                    <span class="thank-you-stat-label">Correct Guesses</span>
+                    <strong class="thank-you-stat-value">{{ total_correct }} / 10</strong>
+                </article>
+                <article class="thank-you-stat-card">
+                    <span class="thank-you-stat-label">Total Points Earned</span>
+                    <strong class="thank-you-stat-value">{{ total_points }}</strong>
+                </article>
+            </div>
+
+            <p class="thank-you-note">
+                You have reached the end of the experiment.
+            </p>
+        </div>
+    </section>
+</main>
+{{ endblock }}

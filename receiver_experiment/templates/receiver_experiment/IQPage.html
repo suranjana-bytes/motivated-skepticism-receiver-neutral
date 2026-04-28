@@ -1,0 +1,50 @@
+{{ block title }}Receiver Experiment{{ endblock }}
+
+{{ block styles }}
+<link rel="stylesheet" href="{{ static 'receiver_experiment/experiment.css' }}">
+{{ endblock }}
+
+{{ block content }}
+<main class="app-shell">
+    <section class="experiment-card">
+        <div class="card-topline">
+            <span>{{ phase_label }}</span>
+            <span>{{ screen_counter }}</span>
+        </div>
+
+        <div class="progress-track" aria-hidden="true">
+            <div class="progress-fill" style="width: {{ progress_percent }}%;"></div>
+        </div>
+
+        <div class="screen-content">
+            <span class="eyebrow">Raven Matrix</span>
+            <h1>Question {{ item.item_number }} of 10</h1>
+            <p class="iq-question-id">Item reference: {{ item.question_id }}</p>
+            <p>{{ item.prompt }}</p>
+
+            <div class="matrix-panel raven-panel">
+                <img class="raven-stem" src="{{ static item.stem_path }}" alt="{{ item.question_id }} matrix">
+            </div>
+
+            <div class="decision-panel iq-options">
+                {{ for option in item.options }}
+                    <label class="iq-option">
+                        <input type="radio" name="{{ form_field_name }}" value="{{ option.value }}">
+                        <span class="iq-option-card">
+                            <span class="iq-option-head">
+                                <span class="iq-option-letter">{{ option.label }}</span>
+                                <span class="iq-option-name">Option {{ option.label }}</span>
+                            </span>
+                            <img class="iq-option-image" src="{{ static option.image_path }}" alt="{{ item.question_id }} {{ option.label }}">
+                        </span>
+                    </label>
+                {{ endfor }}
+            </div>
+        </div>
+
+        <div class="action-row">
+            <button class="otree-btn-next btn-primary">Next</button>
+        </div>
+    </section>
+</main>
+{{ endblock }}
