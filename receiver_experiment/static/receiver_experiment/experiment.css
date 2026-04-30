@@ -45,6 +45,13 @@ body {
     padding: 42px 22px;
 }
 
+.iq-app-shell {
+    height: 100vh;
+    min-height: 0;
+    padding: 2px 8px;
+    overflow: hidden;
+}
+
 .experiment-card {
     width: min(760px, 100%);
     padding: 34px;
@@ -261,87 +268,216 @@ p {
 
 .pixel-sparkle {
     position: absolute;
-    width: 10px;
-    height: 10px;
+    width: 8px;
+    height: 8px;
     image-rendering: pixelated;
-    background: #f5d8a4;
+    background: #ffe7a8;
     box-shadow:
-        10px 0 0 #f5d8a4,
-        0 10px 0 #f5d8a4,
-        10px 10px 0 #fff3d8;
+        8px 0 0 #ffe7a8,
+        -8px 0 0 #ffe7a8,
+        0 8px 0 #ffe7a8,
+        0 -8px 0 #ffe7a8,
+        8px 8px 0 #fff8dc,
+        -8px -8px 0 #fff8dc,
+        16px 0 20px rgba(255, 210, 125, 0.55),
+        -16px 0 20px rgba(255, 210, 125, 0.45);
     opacity: 0;
-    transform: scale(0.8) rotate(0deg);
-    animation: pixelTwinkle 3.4s steps(4, end) infinite;
+    transform: scale(0.7) rotate(0deg) translateY(0);
+    animation: pixelTwinkle 3.6s steps(5, end) infinite;
+}
+
+.pixel-sparkle::before,
+.pixel-sparkle::after {
+    content: "";
+    position: absolute;
+    image-rendering: pixelated;
+}
+
+.pixel-sparkle::before {
+    width: 6px;
+    height: 6px;
+    left: -18px;
+    top: 22px;
+    background: #f7bfa2;
+    box-shadow:
+        6px 0 0 #f7bfa2,
+        0 6px 0 #f7bfa2,
+        6px 6px 0 #ffd9c9;
+    animation: tinyPop 2.8s steps(4, end) infinite;
+}
+
+.pixel-sparkle::after {
+    width: 7px;
+    height: 7px;
+    right: -22px;
+    top: -16px;
+    background: #8ab7ad;
+    box-shadow:
+        7px 0 0 #8ab7ad,
+        0 7px 0 #8ab7ad,
+        7px 7px 0 #d7eee8;
+    animation: tinyPop 3.1s steps(4, end) infinite reverse;
 }
 
 .sparkle-1 {
-    top: 14%;
-    left: 12%;
+    top: 16%;
+    left: 14%;
     animation-delay: 0s;
 }
 
 .sparkle-2 {
     top: 18%;
-    right: 16%;
+    right: 15%;
     animation-delay: 0.5s;
+    background: #ff9fc8;
+    box-shadow:
+        8px 0 0 #ff9fc8,
+        -8px 0 0 #ff9fc8,
+        0 8px 0 #ff9fc8,
+        0 -8px 0 #ff9fc8,
+        8px 8px 0 #ffd6e8,
+        -8px -8px 0 #ffeaf4,
+        16px 0 20px rgba(255, 141, 192, 0.5),
+        -16px 0 20px rgba(255, 141, 192, 0.38);
+}
+
+.sparkle-2::before,
+.sparkle-8::before {
+    background: #ff7fba;
+    box-shadow:
+        6px 0 0 #ff7fba,
+        0 6px 0 #ff7fba,
+        6px 6px 0 #ffd0e6;
+}
+
+.sparkle-2::after,
+.sparkle-8::after {
+    background: #ffcae0;
+    box-shadow:
+        7px 0 0 #ffcae0,
+        0 7px 0 #ffcae0,
+        7px 7px 0 #fff1f7;
 }
 
 .sparkle-3 {
-    top: 34%;
-    left: 8%;
+    top: 36%;
+    left: 10%;
     animation-delay: 1.1s;
+    transform-origin: center;
 }
 
 .sparkle-4 {
     top: 38%;
-    right: 10%;
+    right: 11%;
     animation-delay: 1.7s;
+    background: #9bdc9a;
+    box-shadow:
+        8px 0 0 #9bdc9a,
+        -8px 0 0 #9bdc9a,
+        0 8px 0 #9bdc9a,
+        0 -8px 0 #9bdc9a,
+        8px 8px 0 #daf6c9,
+        -8px -8px 0 #efffe7,
+        16px 0 20px rgba(117, 196, 125, 0.48),
+        -16px 0 20px rgba(117, 196, 125, 0.36);
+}
+
+.sparkle-4::before,
+.sparkle-7::before {
+    background: #79d783;
+    box-shadow:
+        6px 0 0 #79d783,
+        0 6px 0 #79d783,
+        6px 6px 0 #cef6c9;
+}
+
+.sparkle-4::after,
+.sparkle-7::after {
+    background: #baf1bd;
+    box-shadow:
+        7px 0 0 #baf1bd,
+        0 7px 0 #baf1bd,
+        7px 7px 0 #efffe7;
 }
 
 .sparkle-5 {
-    bottom: 24%;
-    left: 14%;
+    bottom: 25%;
+    left: 15%;
     animation-delay: 0.9s;
+    filter: hue-rotate(28deg);
 }
 
 .sparkle-6 {
-    bottom: 18%;
-    right: 18%;
+    bottom: 20%;
+    right: 17%;
     animation-delay: 2.2s;
 }
 
 .sparkle-7 {
-    top: 10%;
+    top: 12%;
     left: 48%;
     animation-delay: 2.7s;
+    background: #8fd6b0;
+    box-shadow:
+        8px 0 0 #8fd6b0,
+        -8px 0 0 #8fd6b0,
+        0 8px 0 #8fd6b0,
+        0 -8px 0 #8fd6b0,
+        8px 8px 0 #d9f7e7,
+        -8px -8px 0 #f0fff6,
+        16px 0 20px rgba(113, 197, 153, 0.48),
+        -16px 0 20px rgba(113, 197, 153, 0.36);
 }
 
 .sparkle-8 {
-    bottom: 12%;
+    bottom: 14%;
     left: 50%;
     animation-delay: 1.4s;
+    background: #ffb1d0;
+    box-shadow:
+        8px 0 0 #ffb1d0,
+        -8px 0 0 #ffb1d0,
+        0 8px 0 #ffb1d0,
+        0 -8px 0 #ffb1d0,
+        8px 8px 0 #ffe0ee,
+        -8px -8px 0 #fff0f7,
+        16px 0 20px rgba(255, 151, 201, 0.5),
+        -16px 0 20px rgba(255, 151, 201, 0.38);
 }
 
 @keyframes pixelTwinkle {
     0% {
         opacity: 0;
-        transform: scale(0.75) rotate(0deg);
+        transform: scale(0.55) rotate(0deg) translateY(10px);
     }
     20% {
-        opacity: 0.85;
-        transform: scale(1) rotate(8deg);
+        opacity: 0.9;
+        transform: scale(1) rotate(10deg) translateY(0);
     }
     45% {
         opacity: 1;
-        transform: scale(1.1) rotate(-8deg);
+        transform: scale(1.18) rotate(-8deg) translateY(-6px);
     }
     70% {
-        opacity: 0.65;
-        transform: scale(0.95) rotate(4deg);
+        opacity: 0.72;
+        transform: scale(0.98) rotate(5deg) translateY(-2px);
     }
     100% {
         opacity: 0;
-        transform: scale(0.75) rotate(0deg);
+        transform: scale(0.55) rotate(0deg) translateY(10px);
+    }
+}
+
+@keyframes tinyPop {
+    0%,
+    100% {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+    35%,
+    65% {
+        opacity: 0.95;
+        transform: scale(1);
     }
 }
 
@@ -356,6 +492,71 @@ p {
     color: var(--muted);
     font-size: 0.95rem;
     letter-spacing: 0.02em;
+}
+
+.iq-card {
+    width: min(980px, calc(100vw - 48px));
+    max-height: calc(100vh - 4px);
+    display: flex;
+    flex-direction: column;
+    padding: 44px 18px 12px;
+    border-radius: 18px;
+}
+
+.iq-screen-content {
+    padding: 4px 0 2px;
+}
+
+.iq-card .card-topline {
+    margin-bottom: 6px;
+    font-size: 0.82rem;
+}
+
+.iq-card .progress-track {
+    height: 7px;
+}
+
+.iq-timer {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 14px;
+    border: 1px solid rgba(185, 98, 53, 0.3);
+    background: linear-gradient(180deg, rgba(255, 243, 232, 0.98), rgba(248, 223, 203, 0.88));
+    color: var(--primary-dark);
+    font-size: 0.88rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    box-shadow:
+        0 12px 24px rgba(185, 98, 53, 0.16),
+        0 0 0 4px rgba(185, 98, 53, 0.08);
+}
+
+.iq-timer-corner {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 2;
+}
+
+.iq-timer-label {
+    text-transform: uppercase;
+    font-size: 0.66rem;
+    letter-spacing: 0.08em;
+}
+
+.iq-timer-value {
+    min-width: 3.4rem;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    font-size: 1rem;
+    color: #9f341d;
+}
+
+.iq-heading {
+    font-size: 1.32rem;
+    margin: 2px 0 6px;
 }
 
 .info-list {
@@ -503,34 +704,103 @@ p {
     box-shadow: 0 18px 34px rgba(185, 98, 53, 0.14);
 }
 
+.receiver-input-screen {
+    display: grid;
+    place-items: center;
+    min-height: 520px;
+    padding: 44px 0 30px;
+}
+
+.receiver-input-panel {
+    width: min(720px, 100%);
+    min-height: 500px;
+    display: grid;
+    align-content: center;
+    justify-items: center;
+    padding: 42px 46px;
+    border: 3px solid rgba(229, 229, 35, 0.95);
+    background: rgba(238, 238, 237, 0.84);
+    text-align: center;
+}
+
+.receiver-round-heading {
+    margin: 0 0 110px;
+    font-family: "Avenir Next", "Segoe UI", "Helvetica Neue", sans-serif;
+    font-size: 1.45rem;
+    font-weight: 500;
+    letter-spacing: 0;
+}
+
+.receiver-input-copy {
+    max-width: 520px;
+}
+
+.receiver-input-copy p {
+    margin-bottom: 14px;
+    font-size: 1.02rem;
+    line-height: 1.55;
+}
+
+.receiver-message-quote {
+    margin: 18px 0 24px;
+    font-weight: 700;
+}
+
+.receiver-guess-input {
+    width: 76px;
+    height: 34px;
+    margin-top: -6px;
+    border: 2px solid rgba(93, 87, 153, 0.42);
+    background: #d8d4ff;
+    color: var(--text);
+    font: inherit;
+    font-size: 1.05rem;
+    text-align: center;
+    box-shadow: inset 0 1px 2px rgba(47, 36, 29, 0.16);
+}
+
+.receiver-input-hint {
+    margin-top: 8px;
+    margin-bottom: 0;
+    color: var(--muted);
+    font-size: 0.84rem;
+}
+
 .matrix-panel {
     display: grid;
-    gap: 12px;
-    margin-top: 18px;
-    padding: 18px;
-    border-radius: 24px;
+    gap: 4px;
+    margin-top: 6px;
+    padding: 10px;
+    border-radius: 16px;
     background: linear-gradient(180deg, rgba(255, 255, 255, 0.86), rgba(255, 249, 242, 0.7));
     border: 1px solid var(--border);
     box-shadow: var(--shadow-soft);
 }
 
 .raven-panel {
-    padding: 18px;
+    padding: 10px;
 }
 
 .raven-stem {
-    width: 100%;
+    width: auto;
+    max-width: 100%;
+    height: 220px;
+    max-height: 220px;
+    margin: 0 auto;
     display: block;
-    border-radius: 18px;
+    border-radius: 12px;
     background: white;
     box-shadow: 0 12px 30px rgba(79, 52, 34, 0.08);
+    object-fit: contain;
 }
 
 .iq-options {
-    margin-top: 18px;
+    margin-top: 10px;
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+    padding: 8px;
+    border-radius: 14px;
 }
 
 .iq-option {
@@ -546,12 +816,13 @@ p {
 
 .iq-option-card {
     display: block;
+    position: relative;
     height: 100%;
-    padding: 14px;
-    border-radius: 20px;
+    padding: 6px;
+    border-radius: 12px;
     border: 1px solid rgba(104, 74, 50, 0.14);
     background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 249, 242, 0.78));
-    box-shadow: 0 12px 26px rgba(79, 52, 34, 0.06);
+    box-shadow: 0 6px 14px rgba(79, 52, 34, 0.05);
     transition:
         transform 180ms ease,
         box-shadow 180ms ease,
@@ -560,48 +831,52 @@ p {
 }
 
 .iq-option:hover .iq-option-card {
-    transform: translateY(-2px);
-    box-shadow: 0 18px 32px rgba(79, 52, 34, 0.1);
+    transform: translateY(-1px);
+    box-shadow: 0 10px 18px rgba(79, 52, 34, 0.08);
 }
 
 .iq-option input:checked + .iq-option-card {
     border-color: rgba(185, 98, 53, 0.45);
     background: linear-gradient(180deg, rgba(244, 224, 207, 0.9), rgba(255, 249, 242, 0.9));
-    box-shadow: 0 18px 34px rgba(185, 98, 53, 0.14);
+    box-shadow: 0 10px 18px rgba(185, 98, 53, 0.12);
 }
 
 .iq-option-head {
+    position: absolute;
+    top: 7px;
+    left: 7px;
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 12px;
+    z-index: 1;
 }
 
 .iq-option-letter {
-    width: 34px;
-    height: 34px;
+    width: 20px;
+    height: 20px;
     display: inline-grid;
     place-items: center;
     border-radius: 999px;
-    background: rgba(47, 92, 103, 0.1);
+    background: rgba(255, 255, 255, 0.9);
     color: var(--secondary);
+    font-size: 0.76rem;
     font-weight: 700;
     flex: 0 0 auto;
 }
 
 .iq-option-name {
-    font-size: 0.98rem;
-    font-weight: 700;
-    color: var(--muted);
+    display: none;
 }
 
 .iq-option-image {
     display: block;
-    width: 100%;
-    aspect-ratio: 1.45 / 1;
+    width: auto;
+    max-width: 100%;
+    height: 112px;
+    max-height: 112px;
+    margin: 0 auto;
     object-fit: contain;
-    padding: 10px;
-    border-radius: 14px;
+    padding: 0;
+    border-radius: 5px;
     background: white;
     border: 1px solid rgba(104, 74, 50, 0.12);
 }
@@ -629,7 +904,7 @@ p {
     display: flex;
     justify-content: flex-end;
     gap: 12px;
-    padding-top: 18px;
+    padding-top: 5px;
 }
 
 .btn-primary {
@@ -649,6 +924,12 @@ p {
         filter 180ms ease;
 }
 
+.iq-card .btn-primary {
+    padding: 10px 24px;
+    font-size: 0.98rem;
+    box-shadow: 0 8px 16px rgba(185, 98, 53, 0.18);
+}
+
 .btn-primary:hover {
     transform: translateY(-1px);
     box-shadow: 0 18px 34px rgba(185, 98, 53, 0.28);
@@ -659,6 +940,11 @@ p {
     .experiment-card {
         padding: 24px;
         border-radius: 24px;
+    }
+
+    .iq-card {
+        padding: 48px 8px 6px;
+        border-radius: 12px;
     }
 
     .card-topline {
@@ -674,6 +960,12 @@ p {
     }
 
     .iq-options {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 3px;
+    }
+
+    .iq-timer-corner {
+        top: 12px;
+        right: 12px;
     }
 }

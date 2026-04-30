@@ -7,7 +7,6 @@ class PlayerBot(Bot):
         if self.round_number == 1:
             yield Welcome
             yield ParticipationInformation
-            yield YourRole
             yield IQIntro
             yield IQQuestion1, dict(iq_answer_1="R2")
             yield IQQuestion2, dict(iq_answer_2="R1")
@@ -19,10 +18,12 @@ class PlayerBot(Bot):
             yield IQQuestion8, dict(iq_answer_8="R8")
             yield IQQuestion9, dict(iq_answer_9="R4")
             yield IQQuestion10, dict(iq_answer_10="R1")
+            yield IQEnd
+            yield Part2Intro
             yield IQTransition
+            yield GameSummaryInstructions
 
         yield RoundStart
-        yield SenderInformation
         available_numbers = sender_message_numbers(self.player.sender_message)
         yield ReceiverDecision, dict(guess=available_numbers[0])
 

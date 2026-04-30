@@ -7,33 +7,35 @@
 {{ block content }}
 <main class="app-shell">
     <section class="experiment-card">
-        <div class="card-topline">
-            <span>{{ phase_label }}</span>
-            <span>{{ screen_counter }}</span>
-        </div>
-
         <div class="progress-track" aria-hidden="true">
             <div class="progress-fill" style="width: {{ progress_percent }}%;"></div>
         </div>
 
-        <div class="screen-content">
-            <span class="eyebrow">Your Decision</span>
-            <h1 class="decision-heading">The Sender sent the following message</h1>
+        <div class="screen-content receiver-input-screen">
+            <div class="receiver-input-panel">
+                <h1 class="receiver-round-heading">{{ round_label }}</h1>
 
-            <div class="message-box message-box-prominent">{{ sender_message }}</div>
-
-            <p class="decision-subtitle">Choose one option:</p>
-
-            <div class="decision-panel">
-                {{ formfield_errors 'guess' }}
-                <div class="decision-choice-list">
-                    {{ for option in choice_options }}
-                        <label class="decision-choice">
-                            <input type="radio" name="guess" value="{{ option.value }}">
-                            <span class="decision-choice-card">{{ option.label }}</span>
-                        </label>
-                    {{ endfor }}
+                <div class="receiver-input-copy">
+                    <p>Your IQ-rank has been computed for this round.</p>
+                    <p>Here is the information that the Sender has sent you about it:</p>
+                    <p class="receiver-message-quote">"{{ sender_message }}"</p>
+                    <p>According to you, <strong>what is your IQ-rank?</strong></p>
+                    <p>Please enter your guess:</p>
                 </div>
+
+                {{ formfield_errors 'guess' }}
+                <input
+                    class="receiver-guess-input"
+                    type="number"
+                    name="guess"
+                    min="1"
+                    max="3"
+                    step="1"
+                    inputmode="numeric"
+                    aria-label="Your IQ-rank guess"
+                    required
+                >
+                <p class="receiver-input-hint">Allowed: {{ available_numbers_text }}</p>
             </div>
         </div>
 
