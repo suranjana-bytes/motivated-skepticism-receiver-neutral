@@ -29,8 +29,8 @@ ADMIN_PASSWORD = environ.get("OTREE_ADMIN_PASSWORD", "admin")
 DEMO_PAGE_INTRO_HTML = """
 <h3>Receiver Experiment</h3>
 <p>
-    This oTree app runs a 10-round receiver task with instruction screens,
-    sender status information, a sender message, and a receiver choice.
+    This oTree app runs a receiver study with a timed Raven IQ section,
+    Part 2 game instructions, 10 receiver decision rounds, and demographics.
 </p>
 """
 
