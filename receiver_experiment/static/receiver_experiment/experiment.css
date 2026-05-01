@@ -746,17 +746,51 @@ p {
     font-weight: 700;
 }
 
-.receiver-guess-input {
-    width: 76px;
-    height: 34px;
-    margin-top: -6px;
-    border: 2px solid rgba(93, 87, 153, 0.42);
+.receiver-guess-options {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: -4px;
+}
+
+.receiver-guess-choice {
+    cursor: pointer;
+}
+
+.receiver-guess-choice input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.receiver-guess-choice span {
+    display: grid;
+    place-items: center;
+    width: 58px;
+    height: 40px;
+    border: 2px solid rgba(93, 87, 153, 0.34);
     background: #d8d4ff;
     color: var(--text);
-    font: inherit;
-    font-size: 1.05rem;
-    text-align: center;
-    box-shadow: inset 0 1px 2px rgba(47, 36, 29, 0.16);
+    font-size: 1.08rem;
+    font-weight: 700;
+    box-shadow: inset 0 1px 2px rgba(47, 36, 29, 0.14);
+    transition:
+        background 160ms ease,
+        border-color 160ms ease,
+        box-shadow 160ms ease,
+        transform 160ms ease;
+}
+
+.receiver-guess-choice input:checked + span {
+    border-color: rgba(185, 98, 53, 0.72);
+    background: #f4d5c0;
+    box-shadow: 0 10px 20px rgba(185, 98, 53, 0.18);
+    transform: translateY(-1px);
+}
+
+.receiver-guess-choice input:focus-visible + span {
+    outline: 3px solid rgba(47, 92, 103, 0.28);
+    outline-offset: 3px;
 }
 
 .receiver-input-hint {

@@ -25,7 +25,9 @@ class PlayerBot(Bot):
 
         yield RoundStart
         available_numbers = sender_message_numbers(self.player.sender_message)
-        yield ReceiverDecision, dict(guess=available_numbers[0])
+        chosen_guess = available_numbers[-1]
+        yield ReceiverDecision, dict(guess=chosen_guess)
+        assert self.player.guess == chosen_guess
 
         if self.round_number == C.NUM_ROUNDS:
             yield DemographicsIntro

@@ -645,6 +645,7 @@ class ReceiverDecision(Page):
         return dict(
             round_label=f"Round {player.round_number} / {C.NUM_ROUNDS}",
             sender_message=receiver_message_display(player.sender_message),
+            available_numbers=available_numbers,
             available_numbers_text=", ".join(str(number) for number in available_numbers),
             **round_progress(player, 2),
         )
