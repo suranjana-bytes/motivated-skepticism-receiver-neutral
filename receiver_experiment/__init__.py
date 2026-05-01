@@ -404,11 +404,21 @@ def iq_score(player: Player) -> int:
     )
 
 
+def random_iq_rank_schedule() -> list[int]:
+    ranks = []
+    while len(ranks) < C.NUM_ROUNDS:
+        ranks.extend(C.NUMBER_CHOICES)
+    ranks = ranks[: C.NUM_ROUNDS]
+    random.shuffle(ranks)
+    return ranks
+
+
 def assign_iq_rank_data(player: Player):
     if "iq_rank_schedule" not in player.participant.vars:
         current_score = iq_score(player)
         current_performance = current_score / len(C.IQ_ITEMS)
         comparison_pairs = raven_comparison_pairs()
+        random_ranks = random_iq_rank_schedule()
         schedule = []
 
         for round_number in range(1, C.NUM_ROUNDS + 1):
@@ -420,7 +430,7 @@ def assign_iq_rank_data(player: Player):
             if comparison_pairs:
                 previous_pair = comparison_pairs[round_number - 1]
                 previous_1, previous_2 = previous_pair
-                iq_rank = computed_iq_rank(current_performance, previous_pair)
+                iq_rank = random_ranks[round_number - 1]
                 round_data.update(
                     previous_participant_1_id=previous_1["participant_id"],
                     previous_participant_1_score=previous_1["raven_score"],
@@ -431,7 +441,7 @@ def assign_iq_rank_data(player: Player):
                     iq_rank=iq_rank,
                 )
             else:
-                iq_rank = random.choice(C.NUMBER_CHOICES)
+                iq_rank = random_ranks[round_number - 1]
                 round_data.update(
                     previous_participant_1_id="",
                     previous_participant_1_score=None,

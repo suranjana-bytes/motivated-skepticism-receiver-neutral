@@ -30,6 +30,9 @@ class PlayerBot(Bot):
         assert self.player.sender_number == self.player.iq_rank
         assert self.player.previous_participant_1_id
         assert self.player.previous_participant_2_id
+        if self.round_number == C.NUM_ROUNDS:
+            ranks = {round_player.iq_rank for round_player in self.player.in_all_rounds()}
+            assert len(ranks) > 1
         available_numbers = sender_message_numbers(self.player.sender_message)
         assert self.player.sender_number in available_numbers
         chosen_guess = available_numbers[-1]
