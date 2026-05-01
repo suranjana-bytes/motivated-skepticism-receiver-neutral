@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: motivated-skepticism-receiver
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: otree prodserver 0.0.0.0:$PORT
+    envVars:
+      - key: OTREE_PRODUCTION
+        value: "1"
+      - key: OTREE_AUTH_LEVEL
+        value: STUDY
+      - key: OTREE_ADMIN_PASSWORD
+        generateValue: true
+      - key: SECRET_KEY
+        generateValue: true

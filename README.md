@@ -36,3 +36,14 @@ otree devserver
 - Password: `admin`
 
 Set `OTREE_ADMIN_PASSWORD` in your shell if you want a different password.
+
+## Deploy on Render
+
+This repository includes a `render.yaml` blueprint and `Procfile`.
+
+1. Open Render and create a new Blueprint.
+2. Connect this GitHub repository.
+3. Select the `main` branch and deploy the blueprint.
+4. After the deploy finishes, open the public Render URL.
+
+The free Render plan is suitable for a supervisor demo, but it may sleep when inactive. For real data collection, use a persistent database and a paid service plan.

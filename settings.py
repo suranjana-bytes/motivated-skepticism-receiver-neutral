@@ -34,6 +34,6 @@ DEMO_PAGE_INTRO_HTML = """
 </p>
 """
 
-SECRET_KEY = "receiver-experiment-secret-key"
+SECRET_KEY = environ.get("SECRET_KEY", "receiver-experiment-secret-key")
 
 INSTALLED_APPS = ["otree"]
