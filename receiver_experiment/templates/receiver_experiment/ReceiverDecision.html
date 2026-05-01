@@ -20,19 +20,24 @@
                     <p>Here is the information that the Sender has sent you about it:</p>
                     <p class="receiver-message-quote">"{{ sender_message }}"</p>
                     <p>According to you, <strong>what is your IQ-rank?</strong></p>
-                    <p>Please choose your guess:</p>
+                    <p>Please enter your guess:</p>
                 </div>
 
                 {{ formfield_errors 'guess' }}
-                <div class="receiver-guess-options" role="radiogroup" aria-label="Your IQ-rank guess">
-                    {{ for number in available_numbers }}
-                        <label class="receiver-guess-choice">
-                            <input type="radio" name="guess" value="{{ number }}" required>
-                            <span>{{ number }}</span>
-                        </label>
-                    {{ endfor }}
-                </div>
-                <p class="receiver-input-hint">Choose one number from the Sender's message: {{ available_numbers_text }}</p>
+                <input
+                    class="receiver-guess-input"
+                    type="number"
+                    name="guess"
+                    min="1"
+                    max="3"
+                    step="1"
+                    inputmode="numeric"
+                    autocomplete="off"
+                    data-allowed-numbers="{{ available_numbers_text }}"
+                    aria-describedby="receiver-guess-hint"
+                    required
+                >
+                <p class="receiver-input-hint" id="receiver-guess-hint">Enter one number from the Sender's message: {{ available_numbers_text }}</p>
             </div>
         </div>
 
@@ -41,4 +46,45 @@
         </div>
     </section>
 </main>
+
+<script>
+    (() => {
+        const input = document.querySelector('.receiver-guess-input');
+        if (!input) return;
+
+        const form = input.closest('form');
+        const allowedNumbers = (input.dataset.allowedNumbers || '')
+            .split(',')
+            .map((number) => number.trim())
+            .filter(Boolean);
+        const allowedText = allowedNumbers.join(', ');
+
+        const validateGuess = () => {
+            const value = input.value.trim();
+            if (!value || allowedNumbers.includes(value)) {
+                input.setCustomValidity('');
+                return;
+            }
+            input.setCustomValidity(`Please enter one of the numbers sent by the Sender: ${allowedText}.`);
+        };
+
+        input.addEventListener('input', validateGuess);
+        input.addEventListener('change', validateGuess);
+        input.addEventListener('wheel', (event) => {
+            if (document.activeElement === input) {
+                event.preventDefault();
+            }
+        }, { passive: false });
+
+        if (form) {
+            form.addEventListener('submit', (event) => {
+                validateGuess();
+                if (!input.checkValidity()) {
+                    event.preventDefault();
+                    input.reportValidity();
+                }
+            });
+        }
+    })();
+</script>
 {{ endblock }}
