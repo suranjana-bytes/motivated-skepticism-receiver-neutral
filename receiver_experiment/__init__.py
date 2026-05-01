@@ -39,16 +39,16 @@ class C(BaseConstants):
         "Other/prefer not to say",
     ]
     IQ_ITEMS = [
-        dict(question_id="Q2", correct="R2"),
+        dict(question_id="Q2", correct="R1"),
         dict(question_id="Q8", correct="R1"),
-        dict(question_id="Q11", correct="R3"),
-        dict(question_id="Q12", correct="R3"),
+        dict(question_id="Q11", correct="R5"),
+        dict(question_id="Q12", correct="R6"),
         dict(question_id="Q15", correct="R2"),
         dict(question_id="Q17", correct="R6"),
-        dict(question_id="Q18", correct="R5"),
-        dict(question_id="Q24", correct="R8"),
-        dict(question_id="Q26", correct="R4"),
-        dict(question_id="Q30", correct="R1"),
+        dict(question_id="Q18", correct="R7"),
+        dict(question_id="Q24", correct="R3"),
+        dict(question_id="Q26", correct="R2"),
+        dict(question_id="Q30", correct="R5"),
     ]
 
 

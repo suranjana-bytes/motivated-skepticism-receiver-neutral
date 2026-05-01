@@ -8,16 +8,16 @@ class PlayerBot(Bot):
             yield Welcome
             yield ParticipationInformation
             yield IQIntro
-            yield IQQuestion1, dict(iq_answer_1="R2")
+            yield IQQuestion1, dict(iq_answer_1="R1")
             yield IQQuestion2, dict(iq_answer_2="R1")
-            yield IQQuestion3, dict(iq_answer_3="R3")
-            yield IQQuestion4, dict(iq_answer_4="R3")
+            yield IQQuestion3, dict(iq_answer_3="R5")
+            yield IQQuestion4, dict(iq_answer_4="R6")
             yield IQQuestion5, dict(iq_answer_5="R2")
             yield IQQuestion6, dict(iq_answer_6="R6")
-            yield IQQuestion7, dict(iq_answer_7="R5")
-            yield IQQuestion8, dict(iq_answer_8="R8")
-            yield IQQuestion9, dict(iq_answer_9="R4")
-            yield IQQuestion10, dict(iq_answer_10="R1")
+            yield IQQuestion7, dict(iq_answer_7="R7")
+            yield IQQuestion8, dict(iq_answer_8="R3")
+            yield IQQuestion9, dict(iq_answer_9="R2")
+            yield IQQuestion10, dict(iq_answer_10="R5")
             yield IQEnd
             yield Part2Intro
             yield IQTransition
