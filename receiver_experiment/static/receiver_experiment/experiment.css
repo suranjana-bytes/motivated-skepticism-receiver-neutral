@@ -746,6 +746,14 @@ p {
     font-weight: 700;
 }
 
+.receiver-status-line {
+    color: var(--muted);
+}
+
+.receiver-status-line strong {
+    color: var(--text);
+}
+
 .receiver-guess-input {
     width: 92px;
     height: 40px;

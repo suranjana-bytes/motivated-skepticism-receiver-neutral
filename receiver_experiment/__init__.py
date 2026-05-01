@@ -1,3 +1,4 @@
+import csv
 import itertools
 import random
 import sqlite3
@@ -16,6 +17,8 @@ and final demographics.
 
 BASE_DIR = Path(__file__).resolve().parents[1]
 DEFAULT_SENDER_DB_PATH = BASE_DIR.parent / "Thesis Experiment" / "db.sqlite3"
+RAVEN_PARTICIPANTS_PATH = BASE_DIR / "receiver_experiment" / "raven_participants.csv"
+SENDER_DECISIONS_PATH = BASE_DIR / "receiver_experiment" / "sender_decisions.csv"
 
 
 class C(BaseConstants):
@@ -61,9 +64,19 @@ class Group(BaseGroup):
 
 
 class Player(BasePlayer):
+    sender_id = models.StringField(blank=True)
     sender_number = models.IntegerField()
     sender_status = models.StringField()
     sender_message = models.StringField()
+    participant_iq_score = models.IntegerField(blank=True)
+    participant_iq_performance = models.FloatField(blank=True)
+    previous_participant_1_id = models.StringField(blank=True)
+    previous_participant_1_score = models.IntegerField(blank=True)
+    previous_participant_1_performance = models.FloatField(blank=True)
+    previous_participant_2_id = models.StringField(blank=True)
+    previous_participant_2_score = models.IntegerField(blank=True)
+    previous_participant_2_performance = models.FloatField(blank=True)
+    iq_rank = models.IntegerField(blank=True)
     guess = models.IntegerField(
         choices=C.NUMBER_CHOICES,
         widget=widgets.RadioSelect,
@@ -130,7 +143,95 @@ def receiver_message_display(sender_message: str) -> str:
 
 
 @lru_cache(maxsize=1)
-def load_sender_decisions():
+def load_raven_participants():
+    if not RAVEN_PARTICIPANTS_PATH.exists():
+        return []
+
+    participants = []
+    with RAVEN_PARTICIPANTS_PATH.open(newline="", encoding="utf-8") as file:
+        for row in csv.DictReader(file):
+            try:
+                answered_items = int(row["answered_items"])
+                raven_score = int(row["raven_score"])
+            except (KeyError, TypeError, ValueError):
+                continue
+
+            if answered_items <= 0:
+                continue
+
+            participants.append(
+                dict(
+                    participant_id=str(row.get("participant_id", "")).strip(),
+                    raven_score=raven_score,
+                    answered_items=answered_items,
+                    raven_performance=raven_score / answered_items,
+                )
+            )
+    return participants
+
+
+def raven_comparison_pairs():
+    participants = load_raven_participants()
+    if len(participants) < 2:
+        return []
+
+    pairs = list(itertools.combinations(participants, 2))
+    random.shuffle(pairs)
+
+    if len(pairs) >= C.NUM_ROUNDS:
+        return pairs[: C.NUM_ROUNDS]
+
+    return [
+        tuple(random.sample(participants, 2))
+        for _ in range(C.NUM_ROUNDS)
+    ]
+
+
+def computed_iq_rank(current_performance: float, previous_pair) -> int:
+    group = [
+        dict(role="current", performance=current_performance),
+        dict(role="previous", performance=previous_pair[0]["raven_performance"]),
+        dict(role="previous", performance=previous_pair[1]["raven_performance"]),
+    ]
+    random.shuffle(group)
+    group.sort(key=lambda item: item["performance"], reverse=True)
+    for index, item in enumerate(group, start=1):
+        if item["role"] == "current":
+            return index
+    return random.choice(C.NUMBER_CHOICES)
+
+
+@lru_cache(maxsize=1)
+def load_sender_decisions_from_csv():
+    if not SENDER_DECISIONS_PATH.exists():
+        return {}
+
+    decisions_by_participant = {}
+    with SENDER_DECISIONS_PATH.open(newline="", encoding="utf-8") as file:
+        for row in csv.DictReader(file):
+            try:
+                sender_id = str(row["sender_id"]).strip()
+                round_number = int(row["round_number"])
+                type_number = int(row["type_number"])
+                sent_message = str(row["sent_message"]).strip()
+                sender_status = str(row["sender_status"]).strip()
+            except (KeyError, TypeError, ValueError):
+                continue
+
+            if not sender_id or not sender_status or not sent_message:
+                continue
+
+            decisions_by_participant.setdefault(sender_id, {})[round_number] = dict(
+                sender_id=sender_id,
+                sender_status=sender_status,
+                sender_number=type_number,
+                sender_message=sent_message,
+            )
+    return decisions_by_participant
+
+
+@lru_cache(maxsize=1)
+def load_sender_decisions_from_db():
     if not DEFAULT_SENDER_DB_PATH.exists():
         return {}
 
@@ -154,6 +255,7 @@ def load_sender_decisions():
     decisions_by_participant = {}
     for participant_id, round_number, sender_status, type_number, sent_message in rows:
         decisions_by_participant.setdefault(participant_id, {})[round_number] = dict(
+            sender_id=str(participant_id),
             sender_status=sender_status,
             sender_number=type_number,
             sender_message=sent_message,
@@ -161,41 +263,62 @@ def load_sender_decisions():
     return decisions_by_participant
 
 
-def imported_sender_ids():
-    complete_ids = []
-    for participant_id, rounds in load_sender_decisions().items():
-        if all(round_number in rounds for round_number in range(1, C.NUM_ROUNDS + 1)):
-            complete_ids.append(participant_id)
-    return complete_ids
+def load_sender_decisions():
+    csv_decisions = load_sender_decisions_from_csv()
+    if csv_decisions:
+        return csv_decisions
+    return load_sender_decisions_from_db()
 
 
-def assigned_imported_sender_id(player: Player):
-    sender_ids = imported_sender_ids()
-    if not sender_ids:
-        return None
-    index = (player.participant.id_in_session - 1) % len(sender_ids)
-    return sender_ids[index]
+def imported_sender_round_for_number(round_number: int, sender_number: int):
+    matching_current_round = []
+    matching_any_round = []
+
+    for rounds in load_sender_decisions().values():
+        for sender_round_number, decision in rounds.items():
+            if decision["sender_number"] != sender_number:
+                continue
+            if sender_number not in sender_message_numbers(decision["sender_message"]):
+                continue
+            matching_any_round.append(decision)
+            if sender_round_number == round_number:
+                matching_current_round.append(decision)
+
+    if matching_current_round:
+        return random.choice(matching_current_round)
+    if matching_any_round:
+        return random.choice(matching_any_round)
+    return None
 
 
-def imported_sender_round(player: Player):
-    sender_participant_id = assigned_imported_sender_id(player)
-    if sender_participant_id is None:
-        return None
-    return load_sender_decisions().get(sender_participant_id, {}).get(player.round_number)
-
-
-def assign_sender_round_data(player: Player):
-    imported_round = imported_sender_round(player)
+def sender_round_data_for_number(round_number: int, sender_number: int):
+    imported_round = imported_sender_round_for_number(round_number, sender_number)
     if imported_round:
-        player.sender_number = imported_round["sender_number"]
-        player.sender_status = imported_round["sender_status"]
-        player.sender_message = imported_round["sender_message"]
-        return
+        return dict(
+            sender_id=imported_round.get("sender_id", ""),
+            sender_number=sender_number,
+            sender_status=imported_round.get("sender_status", "Neutral"),
+            sender_message=imported_round["sender_message"],
+        )
+    return dict(
+        sender_id="",
+        sender_number=sender_number,
+        sender_status="Neutral",
+        sender_message=build_sender_message(sender_number),
+    )
 
-    sender_number = random.choice(C.NUMBER_CHOICES)
-    player.sender_number = sender_number
-    player.sender_status = random.choice(C.STATUS_CHOICES)
-    player.sender_message = build_sender_message(sender_number)
+
+def assign_sender_round_data(player: Player, sender_number=None):
+    if sender_number is None:
+        sender_number = random.choice(C.NUMBER_CHOICES)
+    else:
+        sender_number = int(sender_number)
+
+    sender_data = sender_round_data_for_number(player.round_number, sender_number)
+    player.sender_id = sender_data["sender_id"]
+    player.sender_number = sender_data["sender_number"]
+    player.sender_status = sender_data["sender_status"]
+    player.sender_message = sender_data["sender_message"]
 
 
 def instruction_progress(screen_number: int) -> dict:
@@ -279,6 +402,76 @@ def iq_score(player: Player) -> int:
     return sum(
         1 for answer, item in zip(answers, C.IQ_ITEMS) if answer == item["correct"]
     )
+
+
+def assign_iq_rank_data(player: Player):
+    if "iq_rank_schedule" not in player.participant.vars:
+        current_score = iq_score(player)
+        current_performance = current_score / len(C.IQ_ITEMS)
+        comparison_pairs = raven_comparison_pairs()
+        schedule = []
+
+        for round_number in range(1, C.NUM_ROUNDS + 1):
+            round_data = dict(
+                participant_iq_score=current_score,
+                participant_iq_performance=current_performance,
+            )
+
+            if comparison_pairs:
+                previous_pair = comparison_pairs[round_number - 1]
+                previous_1, previous_2 = previous_pair
+                iq_rank = computed_iq_rank(current_performance, previous_pair)
+                round_data.update(
+                    previous_participant_1_id=previous_1["participant_id"],
+                    previous_participant_1_score=previous_1["raven_score"],
+                    previous_participant_1_performance=previous_1["raven_performance"],
+                    previous_participant_2_id=previous_2["participant_id"],
+                    previous_participant_2_score=previous_2["raven_score"],
+                    previous_participant_2_performance=previous_2["raven_performance"],
+                    iq_rank=iq_rank,
+                )
+            else:
+                iq_rank = random.choice(C.NUMBER_CHOICES)
+                round_data.update(
+                    previous_participant_1_id="",
+                    previous_participant_1_score=None,
+                    previous_participant_1_performance=None,
+                    previous_participant_2_id="",
+                    previous_participant_2_score=None,
+                    previous_participant_2_performance=None,
+                    iq_rank=iq_rank,
+                )
+
+            round_data.update(sender_round_data_for_number(round_number, iq_rank))
+            schedule.append(round_data)
+
+        player.participant.vars["iq_rank_schedule"] = schedule
+
+    round_data = player.participant.vars["iq_rank_schedule"][player.round_number - 1]
+    player.participant_iq_score = round_data["participant_iq_score"]
+    player.participant_iq_performance = round_data["participant_iq_performance"]
+    player.previous_participant_1_id = round_data["previous_participant_1_id"]
+    player.previous_participant_1_score = round_data["previous_participant_1_score"]
+    player.previous_participant_1_performance = round_data[
+        "previous_participant_1_performance"
+    ]
+    player.previous_participant_2_id = round_data["previous_participant_2_id"]
+    player.previous_participant_2_score = round_data["previous_participant_2_score"]
+    player.previous_participant_2_performance = round_data[
+        "previous_participant_2_performance"
+    ]
+    player.iq_rank = round_data["iq_rank"]
+    player.sender_id = round_data["sender_id"]
+    player.sender_number = round_data["sender_number"]
+    player.sender_status = round_data["sender_status"]
+    player.sender_message = round_data["sender_message"]
+
+
+def assign_all_iq_rank_data(player: Player):
+    assign_iq_rank_data(player)
+    for round_player in player.in_all_rounds():
+        if round_player.round_number != player.round_number:
+            assign_iq_rank_data(round_player)
 
 
 class StaticInfoPage(Page):
@@ -489,6 +682,10 @@ class IQEnd(StaticInfoPage):
         return player.round_number == 1
 
     @staticmethod
+    def before_next_page(player: Player, timeout_happened):
+        assign_all_iq_rank_data(player)
+
+    @staticmethod
     def vars_for_template(player: Player):
         return info_context(
             phase_label="",
@@ -620,6 +817,7 @@ class GameSummaryInstructions(StaticInfoPage):
 class RoundStart(StaticInfoPage):
     @staticmethod
     def vars_for_template(player: Player):
+        assign_iq_rank_data(player)
         return info_context(
             eyebrow="",
             heading="A new round is starting.",
@@ -641,9 +839,11 @@ class ReceiverDecision(Page):
 
     @staticmethod
     def vars_for_template(player: Player):
+        assign_iq_rank_data(player)
         available_numbers = sender_message_numbers(player.sender_message)
         return dict(
             round_label=f"Round {player.round_number} / {C.NUM_ROUNDS}",
+            sender_status=player.sender_status,
             sender_message=receiver_message_display(player.sender_message),
             available_numbers=available_numbers,
             available_numbers_text=", ".join(str(number) for number in available_numbers),

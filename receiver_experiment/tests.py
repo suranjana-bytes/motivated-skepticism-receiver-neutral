@@ -24,7 +24,14 @@ class PlayerBot(Bot):
             yield GameSummaryInstructions
 
         yield RoundStart
+        assert self.player.participant_iq_score == 10
+        assert self.player.iq_rank in C.NUMBER_CHOICES
+        assert self.player.sender_id
+        assert self.player.sender_number == self.player.iq_rank
+        assert self.player.previous_participant_1_id
+        assert self.player.previous_participant_2_id
         available_numbers = sender_message_numbers(self.player.sender_message)
+        assert self.player.sender_number in available_numbers
         chosen_guess = available_numbers[-1]
         yield ReceiverDecision, dict(guess=chosen_guess)
         assert self.player.guess == chosen_guess

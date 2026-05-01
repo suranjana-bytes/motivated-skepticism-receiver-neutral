@@ -4,3 +4,5 @@ __pycache__/
 db.sqlite3
 _botcheck/
 *.csv
+!receiver_experiment/raven_participants.csv
+!receiver_experiment/sender_decisions.csv
