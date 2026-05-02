@@ -940,6 +940,97 @@ class StudyComplete(Page):
         )
 
 
+def export_value(value):
+    return "" if value is None else value
+
+
+def custom_export(players):
+    round_variables = [
+        "participant_iq_score",
+        "participant_iq_performance",
+        "previous_participant_1_id",
+        "previous_participant_1_score",
+        "previous_participant_1_performance",
+        "previous_participant_2_id",
+        "previous_participant_2_score",
+        "previous_participant_2_performance",
+        "iq_rank",
+        "sender_id",
+        "sender_number",
+        "sender_message",
+        "guess",
+        "guess_correct",
+        "round_payoff",
+    ]
+    demographic_variables = ["age", "gender", "education_level"]
+    header = ["participant_id_in_session", "participant_code"]
+    for round_number in range(1, C.NUM_ROUNDS + 1):
+        header.extend(
+            f"round_{round_number}_{variable}" for variable in round_variables
+        )
+    header.extend(demographic_variables)
+    yield header
+
+    first_round_players = sorted(
+        [player for player in players if player.round_number == 1],
+        key=lambda player: player.participant.id_in_session,
+    )
+
+    for first_round_player in first_round_players:
+        row = [
+            first_round_player.participant.id_in_session,
+            first_round_player.participant.code,
+        ]
+        all_rounds = first_round_player.in_all_rounds()
+        for round_player in all_rounds:
+            guess = round_player.field_maybe_none("guess")
+            sender_number = round_player.field_maybe_none("sender_number")
+            row.extend(
+                [
+                    export_value(round_player.field_maybe_none("participant_iq_score")),
+                    export_value(
+                        round_player.field_maybe_none("participant_iq_performance")
+                    ),
+                    export_value(
+                        round_player.field_maybe_none("previous_participant_1_id")
+                    ),
+                    export_value(
+                        round_player.field_maybe_none("previous_participant_1_score")
+                    ),
+                    export_value(
+                        round_player.field_maybe_none(
+                            "previous_participant_1_performance"
+                        )
+                    ),
+                    export_value(
+                        round_player.field_maybe_none("previous_participant_2_id")
+                    ),
+                    export_value(
+                        round_player.field_maybe_none("previous_participant_2_score")
+                    ),
+                    export_value(
+                        round_player.field_maybe_none(
+                            "previous_participant_2_performance"
+                        )
+                    ),
+                    export_value(round_player.field_maybe_none("iq_rank")),
+                    export_value(round_player.field_maybe_none("sender_id")),
+                    export_value(sender_number),
+                    export_value(round_player.field_maybe_none("sender_message")),
+                    export_value(guess),
+                    export_value(guess == sender_number if guess is not None else None),
+                    export_value(round_player.payoff),
+                ]
+            )
+
+        final_round_player = all_rounds[-1]
+        row.extend(
+            export_value(final_round_player.field_maybe_none(variable))
+            for variable in demographic_variables
+        )
+        yield row
+
+
 page_sequence = [
     Welcome,
     ParticipationInformation,

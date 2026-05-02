@@ -40,6 +40,19 @@ class PlayerBot(Bot):
         assert self.player.guess == chosen_guess
 
         if self.round_number == C.NUM_ROUNDS:
+            export_rows = list(custom_export(self.player.in_all_rounds()))
+            assert export_rows[0][0:4] == [
+                "participant_id_in_session",
+                "participant_code",
+                "round_1_participant_iq_score",
+                "round_1_participant_iq_performance",
+            ]
+            assert "round_10_guess" in export_rows[0]
+            assert "education_level" in export_rows[0]
+            data_rows = export_rows[1:]
+            participant_codes = {row[1] for row in data_rows}
+            assert len(data_rows) == len(participant_codes)
+            assert self.player.participant.code in participant_codes
             yield DemographicsIntro
             yield DemographicsQuestionnaire, dict(
                 age=25,
